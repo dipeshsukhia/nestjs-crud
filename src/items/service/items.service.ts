@@ -23,7 +23,7 @@ export class ItemsService {
         return this.items;
     }
 
-    async findOne(id: number): Promise<Item> {
+    findOne(id: number): Item {
         return this.items.find( item => item.id === id );
     }
 
@@ -40,7 +40,7 @@ export class ItemsService {
         return item
     }
 
-    async delete(id: number): Promise<Item> {
+    delete(id: number): Item {
         let item = this.items.find( item => item.id === id )
         this.items = this.items.filter(item => item.id !== id);
         return item

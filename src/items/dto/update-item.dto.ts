@@ -1,7 +1,14 @@
+import { IsNotEmpty, IsNumberString } from "class-validator"
+
 export class UpdateItemDto {
 
-    readonly name: string
-    readonly description: string
-    readonly qty: number
+    @IsNotEmpty()
+    name: string
+
+    @IsNotEmpty()
+    description: string
+
+    @IsNumberString()
+    qty: number
     
 }
