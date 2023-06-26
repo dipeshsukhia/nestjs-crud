@@ -29,7 +29,7 @@ export class ItemsController {
     }
 
     @Put(":id")
-    
+    @UsePipes(ValidationPipe)
     update(@Body() updateItemDto: UpdateItemDto, @Param('id', ParseIntPipe) id) : Promise<Item> {
         return this.itemsService.update( id, updateItemDto )
     }
