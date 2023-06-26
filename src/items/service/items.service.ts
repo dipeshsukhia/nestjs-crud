@@ -19,28 +19,28 @@ export class ItemsService {
         }
     ]
 
-    findAll(): Item[] {
+    async findAll(): Promise<Item[]> {
         return this.items;
     }
 
-    findOne(id: number): Item {
+    async findOne(id: number): Promise<Item> {
         return this.items.find( item => item.id === id );
     }
 
-    create( item: Item): Item{
+    async create( item: Item): Promise<Item> {
         item.id = this.items.reduce((max, item) => item.id > max ? item.id : max, 0) + 1
         this.items.push( item )
         return item
     }    
 
-    update( id: number, item: Item): Item {
+    async update( id: number, item: Item): Promise<Item> {
         this.delete(id)
         item.id = id
         this.items.push( item )
         return item
     }
 
-    delete(id: number): Item {
+    async delete(id: number): Promise<Item> {
         let item = this.items.find( item => item.id === id )
         this.items = this.items.filter(item => item.id !== id);
         return item
