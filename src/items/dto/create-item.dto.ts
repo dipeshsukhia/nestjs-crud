@@ -1,14 +1,12 @@
-import { IsNotEmpty, IsNumberString } from "class-validator"
+import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 export class CreateItemDto {
+  @IsNotEmpty()
+  name: string;
 
-    @IsNotEmpty()
-    name: string
+  @IsNotEmpty()
+  description: string;
 
-    @IsNotEmpty()
-    description: string
-
-    @IsNumberString()
-    qty: number
-    
+  @IsNumberString()
+  qty: number;
 }

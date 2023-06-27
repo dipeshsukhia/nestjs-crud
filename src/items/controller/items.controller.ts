@@ -1,46 +1,61 @@
-import { Body, Controller, Get, Post, Put, Delete, Param, ParseIntPipe, UsePipes, HttpException, HttpStatus, ValidationPipe} from '@nestjs/common'
-import { CreateItemDto } from '../dto/create-item.dto'
-import { UpdateItemDto } from '../dto/update-item.dto'
-import { ItemsService } from '../service/items.service'
-import { Item } from '../interface/item.interface'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  ParseIntPipe,
+  UsePipes,
+  HttpException,
+  HttpStatus,
+  ValidationPipe,
+} from '@nestjs/common';
+import { CreateItemDto } from '../dto/create-item.dto';
+import { UpdateItemDto } from '../dto/update-item.dto';
+import { ItemsService } from '../service/items.service';
+import { Item } from '../interface/item.interface';
 
 @Controller('items')
 export class ItemsController {
-    constructor(private itemsService: ItemsService) {}
+  constructor(private itemsService: ItemsService) {}
 
-    @Get()
-    findAll(): Promise<Item[]> {
-        return this.itemsService.findAll()
+  @Get()
+  findAll(): Promise<Item[]> {
+    return this.itemsService.findAll();
+  }
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  create(@Body() createItemDto: CreateItemDto): Promise<Item> {
+    return this.itemsService.create(createItemDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id): Item {
+    const item = this.itemsService.findOne(id);
+    if (!item) {
+      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
     }
+    return item;
+  }
 
-    @Post()    
-    @UsePipes(ValidationPipe)
-    create(@Body() createItemDto: CreateItemDto): Promise<Item> {
-        return this.itemsService.create( createItemDto )
+  @Put(':id')
+  @UsePipes(ValidationPipe)
+  update(
+    @Body() updateItemDto: UpdateItemDto,
+    @Param('id', ParseIntPipe) id,
+  ): Promise<Item> {
+    return this.itemsService.update(id, updateItemDto);
+  }
+
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id): Item {
+    const item = this.itemsService.delete(id);
+    if (!item) {
+      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
     }
-
-    @Get(":id")
-    findOne(@Param('id', ParseIntPipe) id) : Item {
-        const item = this.itemsService.findOne( id )        
-        if ( !item ) {
-            throw new HttpException('Item not available!!!',HttpStatus.NOT_FOUND);
-        }
-        return item;
-    }
-
-    @Put(":id")
-    @UsePipes(ValidationPipe)
-    update(@Body() updateItemDto: UpdateItemDto, @Param('id', ParseIntPipe) id) : Promise<Item> {
-        return this.itemsService.update( id, updateItemDto )
-    }
-
-    @Delete(":id")
-    delete(@Param('id', ParseIntPipe) id) : Item {
-        const item  = this.itemsService.delete( id )
-        if ( !item ) {
-            throw new HttpException('Item not available!!!',HttpStatus.NOT_FOUND);
-        }
-        return item;
-    }
-
+    return item;
+  }
 }
