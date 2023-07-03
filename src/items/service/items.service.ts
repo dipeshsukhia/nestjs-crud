@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
-//import { Item } from '../interface/item.interface';
 import { Item } from '../../typeorm/entities/Item';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ItemParams } from '../type/ItemParams';
-import { time } from 'console';
 
 @Injectable()
 export class ItemsService {
   constructor(
     @InjectRepository(Item) private itemRepository: Repository<Item>,
   ) {}
-
-  private items: Item[] = [];
 
   async findAll(): Promise<Item[]> {
     return this.itemRepository.find();
