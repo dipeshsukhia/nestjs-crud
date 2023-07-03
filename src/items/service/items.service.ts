@@ -34,17 +34,17 @@ export class ItemsService {
     return this.itemRepository.save(newItem);
   }
 
-  async update(id: number, itemDetails: ItemParams): Promise<Item> {
-    this.itemRepository.update(
-      { id },
-      { ...itemDetails, updatedAt: new Date() },
-    );
-    return await this.findOne(id);
+  async update(id: number, itemDetails: ItemParams): Promise<boolean> {
+    return this.itemRepository
+      .update({ id }, { ...itemDetails, updatedAt: new Date() })
+      .then((result) => {
+        return result.affected !== 0;
+      });
   }
 
-  async delete(id: number): Promise<Item> {
-    const item = this.findOne(id);
-    this.itemRepository.delete({ id });
-    return item;
+  async delete(id: number): Promise<boolean> {
+    return this.itemRepository.delete({ id }).then((result) => {
+      return result.affected !== 0;
+    });
   }
 }

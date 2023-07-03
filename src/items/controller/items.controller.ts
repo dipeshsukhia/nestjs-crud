@@ -34,11 +34,12 @@ export class ItemsController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id): Promise<Item> {
-    const item = this.itemsService.findOne(id);
-    if (!item) {
-      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
-    }
-    return item;
+    return this.itemsService.findOne(id).then((item: Item) => {
+      if (!item) {
+        throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
+      }
+      return item;
+    });
   }
 
   @Put(':id')
@@ -47,15 +48,31 @@ export class ItemsController {
     @Body() updateItemDto: UpdateItemDto,
     @Param('id', ParseIntPipe) id,
   ): Promise<Item> {
-    return this.itemsService.update(id, updateItemDto);
+    return this.itemsService.findOne(id).then((item: Item) => {
+      if (!item) {
+        throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
+      }
+      return this.itemsService.update(id, updateItemDto).then((result) => {
+        if (!result) {
+          throw new HttpException('Item not Updated!!!', HttpStatus.NOT_FOUND);
+        }
+        return this.itemsService.findOne(id);
+      });
+    });
   }
 
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id): Promise<Item> {
-    const item = this.itemsService.delete(id);
-    if (!item) {
-      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
-    }
-    return item;
+    return this.itemsService.findOne(id).then((item: Item) => {
+      if (!item) {
+        throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
+      }
+      return this.itemsService.delete(id).then((result) => {
+        if (!result) {
+          throw new HttpException('Item not Deleted!!!', HttpStatus.NOT_FOUND);
+        }
+        return item;
+      });
+    });
   }
 }
