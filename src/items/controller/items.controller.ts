@@ -15,7 +15,7 @@ import {
 import { CreateItemDto } from '../dto/create-item.dto';
 import { UpdateItemDto } from '../dto/update-item.dto';
 import { ItemsService } from '../service/items.service';
-import { Item } from '../interface/item.interface';
+import { Item } from 'src/typeorm/entities/Item';
 
 @Controller('items')
 export class ItemsController {
@@ -33,7 +33,7 @@ export class ItemsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id): Item {
+  findOne(@Param('id', ParseIntPipe) id): Promise<Item> {
     const item = this.itemsService.findOne(id);
     if (!item) {
       throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
@@ -51,7 +51,7 @@ export class ItemsController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id): Item {
+  delete(@Param('id', ParseIntPipe) id): Promise<Item> {
     const item = this.itemsService.delete(id);
     if (!item) {
       throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);

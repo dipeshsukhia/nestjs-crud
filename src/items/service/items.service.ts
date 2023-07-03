@@ -1,48 +1,50 @@
 import { Injectable } from '@nestjs/common';
-import { Item } from '../interface/item.interface';
+//import { Item } from '../interface/item.interface';
+import { Item } from '../../typeorm/entities/Item';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ItemParams } from '../type/ItemParams';
+import { time } from 'console';
 
 @Injectable()
 export class ItemsService {
-  private items: Item[] = [
-    {
-      id: 1,
-      name: 'Item One',
-      description: 'Item one description',
-      qty: 10,
-    },
-    {
-      id: 2,
-      name: 'Item Two',
-      description: 'Item Two description',
-      qty: 20,
-    },
-  ];
+  constructor(
+    @InjectRepository(Item) private itemRepository: Repository<Item>,
+  ) {}
+
+  private items: Item[] = [];
 
   async findAll(): Promise<Item[]> {
-    return this.items;
+    return this.itemRepository.find();
   }
 
-  findOne(id: number): Item {
-    return this.items.find((item) => item.id === id);
+  async findOne(id: number): Promise<Item> {
+    return await this.itemRepository.findOne({
+      where: [{ id: id }],
+    });
   }
 
-  async create(item: Item): Promise<Item> {
-    item.id =
-      this.items.reduce((max, item) => (item.id > max ? item.id : max), 0) + 1;
-    this.items.push(item);
-    return item;
+  async create(itemDetails: ItemParams): Promise<Item> {
+    const newItem = this.itemRepository.create({
+      ...itemDetails,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    return this.itemRepository.save(newItem);
   }
 
-  async update(id: number, item: Item): Promise<Item> {
-    this.delete(id);
-    item.id = id;
-    this.items.push(item);
-    return item;
+  async update(id: number, itemDetails: ItemParams): Promise<Item> {
+    this.itemRepository.update(
+      { id },
+      { ...itemDetails, updatedAt: new Date() },
+    );
+    return await this.findOne(id);
   }
 
-  delete(id: number): Item {
-    const item = this.items.find((item) => item.id === id);
-    this.items = this.items.filter((item) => item.id !== id);
+  async delete(id: number): Promise<Item> {
+    const item = this.findOne(id);
+    this.itemRepository.delete({ id });
     return item;
   }
 }
