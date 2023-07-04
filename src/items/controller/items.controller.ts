@@ -34,11 +34,12 @@ export class ItemsController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id): Promise<Item> {
-    const item = await this.itemsService.findOne(id);
-    if (!item) {
-      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
-    }
-    return item;
+    return await this.itemsService.findOne(id).then((item: Item) => {
+      if (!item) {
+        throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
+      }
+      return item;
+    });
   }
 
   @Put(':id')
@@ -47,27 +48,23 @@ export class ItemsController {
     @Body() updateItemDto: UpdateItemDto,
     @Param('id', ParseIntPipe) id,
   ): Promise<Item> {
-    const item = await this.itemsService.findOne(id);
-    if (!item) {
-      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
-    }
-    const result = await this.itemsService.update(id, updateItemDto);
-    if (!result) {
-      throw new HttpException('Item not Updated!!!', HttpStatus.NOT_FOUND);
-    }
-    return await this.itemsService.findOne(id);
+    await this.findOne(id);
+    return this.itemsService.update(id, updateItemDto).then(async (result) => {
+      if (!result) {
+        throw new HttpException('Item not Updated!!!', HttpStatus.NOT_FOUND);
+      }
+      return await this.itemsService.findOne(id);
+    });
   }
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id): Promise<Item> {
-    const item = await this.itemsService.findOne(id);
-    if (!item) {
-      throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
-    }
-    const result = await this.itemsService.delete(id);
-    if (!result) {
-      throw new HttpException('Item not Deleted!!!', HttpStatus.NOT_FOUND);
-    }
-    return item;
+    const item = await this.findOne(id);
+    return this.itemsService.delete(id).then((result) => {
+      if (!result) {
+        throw new HttpException('Item not Deleted!!!', HttpStatus.NOT_FOUND);
+      }
+      return item;
+    });
   }
 }
