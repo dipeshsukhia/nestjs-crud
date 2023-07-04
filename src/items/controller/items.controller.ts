@@ -33,7 +33,7 @@ export class ItemsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id): Promise<Item> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Item> {
     return await this.itemsService.findOne(id).then((item: Item) => {
       if (!item) {
         throw new HttpException('Item not available!!!', HttpStatus.NOT_FOUND);
@@ -46,7 +46,7 @@ export class ItemsController {
   @UsePipes(ValidationPipe)
   async update(
     @Body() updateItemDto: UpdateItemDto,
-    @Param('id', ParseIntPipe) id,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<Item> {
     await this.findOne(id);
     return this.itemsService.update(id, updateItemDto).then(async (result) => {
@@ -58,7 +58,7 @@ export class ItemsController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id): Promise<Item> {
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<Item> {
     const item = await this.findOne(id);
     return this.itemsService.delete(id).then((result) => {
       if (!result) {
