@@ -49,18 +49,20 @@ export class ItemsController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Item> {
     await this.findOne(id);
-    return this.itemsService.update(id, updateItemDto).then(async (result) => {
-      if (!result) {
-        throw new HttpException('Item not Updated!!!', HttpStatus.NOT_FOUND);
-      }
-      return await this.itemsService.findOne(id);
-    });
+    return await this.itemsService
+      .update(id, updateItemDto)
+      .then(async (result) => {
+        if (!result) {
+          throw new HttpException('Item not Updated!!!', HttpStatus.NOT_FOUND);
+        }
+        return await this.itemsService.findOne(id);
+      });
   }
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number): Promise<Item> {
     const item = await this.findOne(id);
-    return this.itemsService.delete(id).then((result) => {
+    return await this.itemsService.delete(id).then((result) => {
       if (!result) {
         throw new HttpException('Item not Deleted!!!', HttpStatus.NOT_FOUND);
       }
