@@ -53,7 +53,10 @@ export class ItemsController {
       .update(id, updateItemDto)
       .then(async (result) => {
         if (!result) {
-          throw new HttpException('Item not Updated!!!', HttpStatus.NOT_FOUND);
+          throw new HttpException(
+            'Item not Updated!!!',
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
         }
         return await this.itemsService.findOne(id);
       });
@@ -64,7 +67,10 @@ export class ItemsController {
     const item = await this.findOne(id);
     return await this.itemsService.delete(id).then((result) => {
       if (!result) {
-        throw new HttpException('Item not Deleted!!!', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Item not Deleted!!!',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
       }
       return item;
     });
