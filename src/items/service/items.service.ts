@@ -11,7 +11,7 @@ export class ItemsService {
   ) {}
 
   async findAll(): Promise<Item[]> {
-    return this.itemRepository.find();
+    return await this.itemRepository.find();
   }
 
   async findOne(id: number): Promise<Item> {
@@ -27,11 +27,11 @@ export class ItemsService {
       updatedAt: new Date(),
     });
 
-    return this.itemRepository.save(newItem);
+    return await this.itemRepository.save(newItem);
   }
 
   async update(id: number, itemDetails: ItemParams): Promise<boolean> {
-    return this.itemRepository
+    return await this.itemRepository
       .update({ id }, { ...itemDetails, updatedAt: new Date() })
       .then((result) => {
         return result.affected !== 0;
@@ -39,7 +39,7 @@ export class ItemsService {
   }
 
   async delete(id: number): Promise<boolean> {
-    return this.itemRepository.delete({ id }).then((result) => {
+    return await this.itemRepository.delete({ id }).then((result) => {
       return result.affected !== 0;
     });
   }
