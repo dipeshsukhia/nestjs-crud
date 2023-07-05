@@ -8,7 +8,8 @@ const Orm = TypeOrmModule.forRoot({
   username: 'hello_world',
   password: 'hello_world',
   database: 'hello_world',
-  entities: [Item],
+  //entities: [Item],
+  autoLoadEntities: true,
   synchronize: true,
 });
 
