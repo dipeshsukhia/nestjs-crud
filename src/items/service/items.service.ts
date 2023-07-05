@@ -1,46 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { Item } from '../../typeorm/entities/Item';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { ItemParams } from '../type/ItemParams';
+import { ItemRepository } from '../repository/items.repository';
 
 @Injectable()
 export class ItemsService {
-  constructor(
-    @InjectRepository(Item) private itemRepository: Repository<Item>,
-  ) {}
+  constructor(private itemRepository: ItemRepository) {}
 
-  async findAll(): Promise<Item[]> {
-    return await this.itemRepository.find();
+  findAll(): Promise<Item[]> {
+    return this.itemRepository.findAll();
   }
 
-  async findOne(id: number): Promise<Item> {
-    return await this.itemRepository.findOne({
-      where: [{ id: id }],
-    });
+  findOne(id: number): Promise<Item> {
+    return this.itemRepository.findById(id);
   }
 
-  async create(itemDetails: ItemParams): Promise<Item> {
-    const newItem = this.itemRepository.create({
-      ...itemDetails,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    return await this.itemRepository.save(newItem);
+  create(itemDetails: ItemParams): Promise<Item> {
+    return this.itemRepository.createItem(itemDetails);
   }
 
-  async update(id: number, itemDetails: ItemParams): Promise<boolean> {
-    return await this.itemRepository
-      .update({ id }, { ...itemDetails, updatedAt: new Date() })
-      .then((result) => {
-        return result.affected !== 0;
-      });
+  update(id: number, itemDetails: ItemParams): Promise<boolean> {
+    return this.itemRepository.updateItem(id, itemDetails);
   }
 
-  async delete(id: number): Promise<boolean> {
-    return await this.itemRepository.delete({ id }).then((result) => {
-      return result.affected !== 0;
-    });
+  delete(id: number): Promise<boolean> {
+    return this.itemRepository.deleteItem(id);
   }
 }

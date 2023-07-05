@@ -22,14 +22,14 @@ export class ItemsController {
   constructor(private itemsService: ItemsService) {}
 
   @Get()
-  async findAll(): Promise<Item[]> {
-    return await this.itemsService.findAll();
+  findAll(): Promise<Item[]> {
+    return this.itemsService.findAll();
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() createItemDto: CreateItemDto): Promise<Item> {
-    return await this.itemsService.create(createItemDto);
+  create(@Body() createItemDto: CreateItemDto): Promise<Item> {
+    return this.itemsService.create(createItemDto);
   }
 
   @Get(':id')

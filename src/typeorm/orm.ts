@@ -1,5 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Item } from './entities/Item';
+//import { Item } from './entities/Item';
 
 const Orm = TypeOrmModule.forRoot({
   type: 'mysql',
